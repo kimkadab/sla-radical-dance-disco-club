@@ -344,7 +344,6 @@
       refs.msg.classList.add('ok');
       refs.input.value = '';
       renderCard(name, { link, meta, ts: Date.now() });
-      try{ localStorage.setItem('clube-do-disco-' + name, JSON.stringify({ link, meta, ts: Date.now() })); }catch(e){}
       setTimeout(() => { refs.panel.classList.remove('open'); refs.msg.textContent = ''; }, 900);
     }catch(e){
       refs.msg.textContent = 'Deu erro ao salvar, tenta de novo.';
@@ -371,26 +370,15 @@
     }
   }
 
-  function loadFromCache(){
-    NAMES.forEach(name => {
-      try{
-        const raw = localStorage.getItem('clube-do-disco-' + name);
-        if(raw) renderCard(name, JSON.parse(raw));
-      }catch(e){}
-    });
-  }
-
   async function loadAll(){
-    await Promise.all(NAMES.map(async name => {
+    for(const name of NAMES){
       const entry = await getEntry(name);
       if(entry !== undefined){
         renderCard(name, entry);
-        try{ localStorage.setItem('clube-do-disco-' + name, JSON.stringify(entry)); }catch(e){}
       }
-    }));
+    }
   }
 
-  loadFromCache();
   loadAll();
   setInterval(loadAll, 12000);
 </script>
